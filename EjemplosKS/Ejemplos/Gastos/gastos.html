@@ -23,9 +23,29 @@
 
             self.Nombre = ko.observable('');
             self.Apellido = ko.observable('');
-            self.MontoDisponible = ko.observable();
-            self.nombreCompleto = ko.computed(function () {
-                
+            self.MontoUsuario = ko.observable();
+            self.MontoUsuario(null);
+            self.MontoDisponible = ko.observable(self.MontoUsuario());
+            self.setMontoUsuario = ko.observable(true);
+            
+            self.ListGastos = ko.observableArray();
+
+            self.gasto = {
+                descripcion: ko.observable(),
+                monto: ko.observable()
+            }
+
+            self.hayAlMenosUnGasto = ko.observable(false);
+            
+            self.setGasto = function () {
+                self.ListGastos.push({ id: self.ListGastos().length + 1, descripcion: self.gasto.descripcion(), monto: self.gasto.monto() });
+                self.hayAlMenosUnGasto(self.ListGastos().length != 0);
+                self.MontoDisponible(self.MontoDisponible() - self.gasto.monto());
+                self.gasto.descripcion(null);
+                self.gasto.monto(null);
+            }
+
+            self.nombreCompleto = ko.computed(function () {    
                 if (this.Nombre() != '' && this.Apellido() != '') {
                     return 'Gastos de: ' + this.Apellido() + ', ' + this.Nombre();
                 }
@@ -33,6 +53,20 @@
                     return 'Introduzca los datos personales';
                 }
             }, this);
+
+            self.formatMontoRestante = ko.computed(function () {
+                
+                if (this.MontoUsuario() == null || this.MontoUsuario() == '') {
+                    return '';
+                } else {
+                    if (this.setMontoUsuario()) {
+                        this.setMontoUsuario(false);
+                        this.MontoDisponible(this.MontoUsuario());
+                    }                    
+                    return '$' + this.MontoDisponible();
+                }
+            }, this);
+
         }
 
         $(function () {
@@ -60,33 +94,55 @@
                         <input placeholder="Apellido" class="form-control" data-bind="value: Apellido" />
                     </p>
                     <p>
-                        <input placeholder="Monto disponible en $" type="number" class="form-control" data-bind="value: MontoDisponible" />
+                        <input placeholder="Monto disponible en $" type="number" class="form-control" data-bind="value: MontoUsuario, enable: setMontoUsuario" />
                     </p>
               </div>
             </div>
-            <div class="panel panel-default">
+            <div class="panel panel-default" data-bind="with: MontoDisponible">
                 <div class="panel-body">
                     <h3>Gasto</h3>
                     <p>
-                        <input placeholder="Descripcion" class="form-control"/>
+                        <input placeholder="Descripcion" class="form-control" data-bind="value: $root.gasto.descripcion"/>
                     </p>
                     <p>
-                        <input placeholder="Monto $" type="number" class="form-control" />
+                        <input placeholder="Monto $" type="number" class="form-control" data-bind="value: $root.gasto.monto"/>
                     </p>
                     <p>
-                    <a class="btn btn-primary">Guardar</a>
+                    <a class="btn btn-primary" data-bind="click: $root.setGasto">Guardar</a>
                     </p>
                 </div>
             </div>
         </div> 
         <div class="col-xs-12 col-lg-9 col-sm-6 col-md-8">
-             <div class="panel panel-default">
-                  <div class="panel-body">
-                      <div class="row">
-                          <h3 data-bind="text: nombreCompleto"></h3>
-                      </div>
-                  </div>
-             </div>
+             
+                <div class="row">
+                    <div class="col-xs-12 col-lg-6 col-sm-6 col-md-8" >
+                    <h3 data-bind="text: nombreCompleto"></h3>
+                    </div>
+                    <div class="col-xs-12 col-lg-6 col-sm-6 col-md-4" >
+                    <h3 data-bind="text: formatMontoRestante"></h3>
+                    </div>
+                </div>
+                <div class="row" data-bind="visible: hayAlMenosUnGasto">
+                    <div class="col-xs-12 col-lg-12 col-sm-12 col-md-12">
+                        <table id="Tabla" class="table table-hover" >
+                            <thead>
+                                <tr>
+                                    <th>Descripcion</th><th>Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach: ListGastos">
+                                <tr>
+                                   
+                                    <td data-bind="text: descripcion"></td>
+                                    <td data-bind="text: monto"></td>
+                                    
+                                            
+                                </tr>    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
         </div>
     </div>
 
