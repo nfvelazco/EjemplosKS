@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>La Plata</title>
+
+        <script src="../../Scripts/jquery-1.11.1.min.js"></script>
+        <script src="../../Scripts/bootstrap.min.js"></script>
+        <script src="../../Scripts/Knockaut.js"></script>
+
+    <script type="text/javascript">
+
+        var LaPlataViewModel = function () {
+            var self = this;
+
+            self.Nombre = ko.observable();
+            self.Apellido = ko.observable();
+
+            self.NombreCompleto = ko.computed(function () {
+                if (self.Nombre() != '' && self.Apellido() != '') {
+                    return 'Nombre: ' + self.Nombre() + ' Apellido:' + self.Apellido();
+                }
+            },this);
+
+        }
+
+    </script>
+
+</head>
+<body>
+
+
+
+
+
+
+</body>
+</html>

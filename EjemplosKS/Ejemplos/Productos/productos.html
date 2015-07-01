@@ -114,11 +114,11 @@
             </tr>
         </thead>
         <tbody data-bind="foreach: productos">
-            <tr data-bind="click: $root.selectProd">
+            <tr>
                 <td data-bind="text: nombre"></td>
                 <td data-bind="text: descripcion"></td>
                 <td data-bind="text: precio"></td>
-                <td><span class="glyphicon glyphicon-eye-open" style="cursor:pointer" title="Detalle"></span></td>
+                <td><span  data-bind="click: $root.selectProd" class="glyphicon glyphicon-eye-open" style="cursor:pointer" title="Detalle"></span></td>
             </tr>    
         </tbody>
     </table>
